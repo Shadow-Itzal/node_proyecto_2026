@@ -1,0 +1,23 @@
+{
+  "name": "node-proyecto-2026",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Marta Mariana Dominguez",
+  "license": "MIT",
+  "type": "module",
+  "description": "API REST de productos con Node.js, Express y Firebase",
+  "dependencies": {
+    "body-parser": "^2.4.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "firebase": "^13.2.0",
+    "jsonwebtoken": "^9.0.3"
+  }
+}
