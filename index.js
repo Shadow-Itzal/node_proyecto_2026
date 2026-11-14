@@ -1,79 +1,112 @@
-/*
-====================================
-PARA QUE SIRVE?
-Es el archivo principal de nuestra aplicación.
-Se encarga de iniciar el servidor Express,
-configurar los middlewares y establecer el puerto
-en el que nuestra API recibirá las solicitudes.
 
-También contiene la ruta principal y
-el manejo de rutas que no existen.
-====================================
+/*
+====================================================
+¿PARA QUÉ SIRVE?
+Es el archivo principal de nuestra aplicación.
+
+Se encarga de:
+- Configurar e iniciar el servidor Express.
+- Cargar las variables de entorno.
+- Habilitar los middlewares globales.
+- Registrar las rutas de productos y autenticación.
+- Mostrar un mensaje en la ruta principal.
+- Gestionar las rutas que no existen.
+
+====================================================
 */
 
-// importamos Express para crear nuestro servidor
+// cargamos las variables de entorno del archivo .env.
+import "dotenv/config";
+
+// importamos Express para crear nuestro servidor.
 import express from "express";
 
-// importamos body-parser para interpretar los datos enviados en el cuerpo (body) de las peticiones
-import bodyParser from "body-parser";
-
-// importamos dotenv para leer las variables de entorno almacenadas en el archivo .env
-import dotenv from "dotenv";
-
-// importamos CORS para permitir solicitudes desde otros orígenes
+// importamos CORS para permitir solicitudes desde otros orígenes.
 import cors from "cors";
 
-// cargamos las variables del archivo .env
-dotenv.config();
+// importamos las rutas de productos.
+import productosRouter from "./src/routes/productos.routes.js";
 
-// creamos nuestra aplicación Express
+// importamos las rutas de autenticación.
+import authRouter from "./src/routes/auth.routes.js";
+
+
+// ==================================================
+// CONFIGURACIÓN DEL SERVIDOR
+// ==================================================
+
+// creamos nuestra aplicación Express.
 const app = express();
 
-// habilitamos CORS para permitir solicitudes desde otros orígenes
-app.use(cors());
-
-// definimos el puerto del servidor. Si no encuentra PORT en .env, usaremos el puerto 3000 por defecto.
+// definimos el puerto del servidor.
+// Si no encuentra PORT en .env, utilizará el 3000.
 const PORT = process.env.PORT || 3000;
 
 
-// ====================================
-// MIDDLEWARES
-// ====================================
+// ==================================================
+// MIDDLEWARES GLOBALES
+// ==================================================
 
-// permitimos que Express interprete los datos enviados en formato JSON en las peticiones
-app.use(bodyParser.json());
+// permitimos que Express interprete los datos enviados en formato JSON.
+app.use(express.json());
+
+// habilitamos CORS para permitir solicitudes desde otros orígenes.
+app.use(cors());
+
+// mostramos en la consola el método y la dirección de cada solicitud que recibe nuestro servidor.
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+
+    // permitimos que la solicitud continúe.
+    next();
+});
 
 
-// ====================================
+// ==================================================
 // RUTA PRINCIPAL
-// ====================================
+// ==================================================
 
-// esta ruta permite comprobar que nuestra API está funcionando correctamente. 
-app.get(`/`, (req, res) => {
+// esta ruta permite comprobar que nuestra API está funcionando correctamente.
+app.get("/", (req, res) => {
     res.send("API del proyecto Node.js funcionando correctamente");
 });
 
 
-// ====================================
-// MANEJO DE RUTAS NO ENCONTRADAS
-// ====================================
+// ==================================================
+// REGISTRO DE RUTAS
+// ==================================================
 
-// si el usuario intenta acceder a una ruta que no existe, le devolvemos un mensaje de error con el código 404 (Not Found).
-// este middleware debe ir al final de todas las rutas definidas, para que solo se ejecute si ninguna ruta anterior coincide con la solicitud.
+// conectamos las rutas de productos.
+// todas comenzarán con /api/productos.
+app.use("/api/productos", productosRouter);
+
+// conectamos las rutas de autenticación.
+// todas comenzarán con /api/auth.
+app.use("/api/auth", authRouter);
+
+
+// ==================================================
+// MANEJO DE RUTAS NO ENCONTRADAS
+// ==================================================
+
+// si alguien solicita una dirección que no existe, devolvemos el estado HTTP 404 (No encontrado).
+
+// este middleware debe colocarse después de todas las rutas de nuestra aplicación.
 app.use((req, res) => {
-    res.status(404).json({mensaje: "La ruta solicitada no existe. Por favor, verifica la URL y el método HTTP."});
+    res.status(404).json({
+        mensaje: "La ruta solicitada no existe"
+    });
 });
 
 
-// ====================================
+// ==================================================
 // INICIO DEL SERVIDOR
-// ====================================
+// ==================================================
 
-// iniciamos el servidor en el puerto definido y mostramos un mensaje en la consola indicando que está funcionando correctamente.
+// ponemos el servidor a escuchar solicitudes en el puerto definido anteriormente.
 app.listen(PORT, () => {
     console.log(`Servidor funcionando en http://localhost:${PORT}`);
 });
-
 
 
 
