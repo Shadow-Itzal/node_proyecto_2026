@@ -46,7 +46,7 @@ const configuracionIncompleta = Object.values(firebaseConfig).some(
 if (configuracionIncompleta) {
     throw new Error(
         "Faltan datos de configuración de Firebase en el archivo .env"
-    )
+    );
 }
 
 

@@ -102,13 +102,6 @@ export const iniciarSesion = async (req, res) => {
             });
         }
 
-        // comprobamos que los datos recibidos tengan el formato esperado.
-        if (typeof email !== "string" || typeof password !== "string") {
-            return res.status(400).json({
-                mensaje: "Los datos ingresados no son válidos"
-            });
-        }
-
         // enviamos las credenciales al servicio para verificar si el usuario puede ingresar.
         const resultado = await authService.iniciarSesion(email, password);
 
