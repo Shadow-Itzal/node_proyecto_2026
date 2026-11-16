@@ -2,60 +2,65 @@
 /*
 ====================================================
 ¿PARA QUÉ SIRVE?
-Este archivo contiene la lógica de autenticación
-de los usuarios.
+Este archivo contiene la lógica relacionada con
+el registro y el inicio de sesión de los usuarios.
 
-Se encarga de registrar usuarios nuevos, comprobar
-si un correo ya está registrado, proteger las
-contraseñas y validar los datos al iniciar sesión.
-
-También solicita la generación del token JWT
-cuando el usuario inicia sesión correctamente.
+Se encarga de:
+- Normalizar los correos electrónicos.
+- Comprobar si un usuario ya está registrado.
+- Encriptar las contraseñas.
+- Verificar las credenciales al iniciar sesión.
+- Generar un token JWT con los datos del usuario
+  y su rol.
 ====================================================
 */
 
-// importamos bcryptjs para proteger y comparar contraseñas.
+// importamos bcryptjs para encriptar y comparar las contraseñas de los usuarios.
 import bcrypt from "bcryptjs";
 
-// importamos las funciones del model de usuarios.
-import { create, findByEmail } from "../models/user.model.js";
+// importamos las funciones del modelo de usuarios.
+import {
+    create,
+    findByEmail
+} from "../models/user.model.js";
 
 // importamos la función que genera los tokens JWT.
 import { generarToken } from "../utils/token-generator.js";
 
 
 // ==================================================
-// REGISTRAR UN USUARIO
+// REGISTRAR USUARIO
 // ==================================================
 
-// recibimos el correo y la contraseña del usuario.
+// esta función registra un usuario nuevo.
 export const registrarUsuario = async (email, password) => {
 
-    // eliminamos espacios y convertimos el correo a minúsculas para mantener un formato uniforme.
+    // normalizamos el correo para evitar diferencias entre mayúsculas, minúsculas y espacios.
     const correoNormalizado = email.trim().toLowerCase();
 
-    // comprobamos si el correo ya está registrado.
+    // buscamos si ya existe un usuario con ese correo.
     const usuarioExistente = await findByEmail(correoNormalizado);
 
-    // si encontramos un usuario, no permitimos registrar nuevamente ese correo.
+    // si el usuario existe, devolvemos null.
     if (usuarioExistente) {
         return null;
     }
 
-    // generamos un hash de la contraseña.
-    // el número 10 indica el costo de procesamiento.
+    // encriptamos la contraseña utilizando bcrypt.
     const contraseñaHasheada = await bcrypt.hash(password, 10);
 
-    // guardamos el usuario en Firestore.
+    // creamos el usuario en Firebase.
+    // el modelo asignará automáticamente el rol "usuario".
     const nuevoUsuario = await create({
         email: correoNormalizado,
         password: contraseñaHasheada
     });
 
-    // devolvemos solamente el ID y el correo.
+    // devolvemos los datos del usuario sin incluir su contraseña en la respuesta.
     return {
         id: nuevoUsuario.id,
-        email: nuevoUsuario.email
+        email: nuevoUsuario.email,
+        rol: nuevoUsuario.rol
     };
 };
 
@@ -64,21 +69,21 @@ export const registrarUsuario = async (email, password) => {
 // INICIAR SESIÓN
 // ==================================================
 
-// recibimos el correo y la contraseña del usuario.
+// esta función verifica las credenciales del usuario y genera un token JWT si son correctas.
 export const iniciarSesion = async (email, password) => {
 
-    // normalizamos el correo para realizar la búsqueda.
+    // normalizamos el correo electrónico.
     const correoNormalizado = email.trim().toLowerCase();
 
-    // buscamos al usuario en Firestore.
+    // buscamos al usuario en Firebase.
     const usuario = await findByEmail(correoNormalizado);
 
-    // si no encontramos el usuario, devolvemos null.
+    // si no existe, devolvemos null.
     if (!usuario) {
         return null;
     }
 
-    // comparamos la contraseña ingresada con el hash que está almacenado en Firestore.
+    // comparamos la contraseña ingresada con el hash almacenado en Firebase.
     const contraseñaValida = await bcrypt.compare(
         password,
         usuario.password
@@ -89,10 +94,11 @@ export const iniciarSesion = async (email, password) => {
         return null;
     }
 
-    // generamos un token con el ID y el correo del usuario autenticado.
+    // generamos el token incluyendo el ID, el correo electrónico y el rol del usuario.
     const token = generarToken({
         id: usuario.id,
-        email: usuario.email
+        email: usuario.email,
+        rol: usuario.rol
     });
 
     // devolvemos el token y los datos del usuario.
@@ -100,10 +106,10 @@ export const iniciarSesion = async (email, password) => {
         token,
         usuario: {
             id: usuario.id,
-            email: usuario.email
+            email: usuario.email,
+            rol: usuario.rol
         }
     };
 };
-
 
 

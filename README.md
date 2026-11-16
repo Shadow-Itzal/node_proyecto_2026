@@ -19,3 +19,16 @@
 - dotenv: Lee variables de entorno.
 - firebase: Conexión con Firestore.
 
+
+## Rutas conectadas
+Método  |	Dirección         |	Función
+------  | ----------------    | -----------------
+GET	    |      /	          | Mensaje de bienvenida
+GET	    | /api/productos      |	Obtener productos
+GET	    | /api/productos/:id  |	Obtener un producto
+POST	| /api/productos      |	Crear producto
+PUT	    | /api/productos/:id  |	Actualizar producto
+DELETE  | /api/productos/:id  |	Eliminar producto
+POST    | /api/auth/register  |	Registrar usuario
+POST    | /api/auth/login     |	Iniciar sesión
+

@@ -2,19 +2,21 @@
 /*
 ====================================================
 ¿PARA QUÉ SIRVE?
-Este archivo se encarga de trabajar directamente
-con la colección "users" de nuestra base de datos
-Firestore.
+Este archivo se comunica directamente con Firebase
+para realizar las operaciones relacionadas con
+los usuarios.
 
-Contiene las funciones para buscar usuarios por
-su correo electrónico y registrar usuarios nuevos.
+Se encarga de:
+- Buscar un usuario por su correo electrónico.
+- Crear un nuevo usuario.
+- Asignar automáticamente el rol de usuario.
 
-Las contraseñas que recibe deben estar previamente
-protegidas mediante un hash generado con bcryptjs.
+Por seguridad, los registros nuevos siempre tendrán
+el rol "usuario".
 ====================================================
 */
 
-// importamos las funciones necesarias de Firestore.
+// importamos las funciones de Firebase necesarias para consultar y guardar usuarios.
 import {
     collection,
     addDoc,
@@ -23,43 +25,43 @@ import {
     where
 } from "firebase/firestore";
 
-// importamos la conexión con nuestra base de datos.
+// importamos la conexión con Firestore.
 import { db } from "../config/firebase.js";
 
 
 // ==================================================
-// REFERENCIA A LA COLECCIÓN DE USUARIOS
+// COLECCIÓN DE USUARIOS
 // ==================================================
 
-// indicamos que vamos a trabajar con la colección llamada "users" dentro de nuestra base de datos.
+// indicamos que trabajaremos con la colección "users" dentro de nuestra base de datos Firestore.
 const usuariosColeccion = collection(db, "users");
 
 
 // ==================================================
-// BUSCAR UN USUARIO POR SU CORREO ELECTRÓNICO
+// BUSCAR USUARIO POR CORREO
 // ==================================================
 
-// buscamos en Firestore un usuario que tenga el correo electrónico recibido como parámetro.
+// esta función busca si existe un usuario registrado con el correo electrónico recibido.
 export const findByEmail = async (email) => {
 
-    // creamos una consulta para buscar coincidencias en el campo "email" de la colección.
+    // creamos una consulta para buscar coincidencias en el campo email.
     const consulta = query(
         usuariosColeccion,
         where("email", "==", email)
     );
 
-    // ejecutamos la consulta en Firestore.
+    // ejecutamos la consulta en Firebase.
     const resultado = await getDocs(consulta);
 
-    // si no encontramos ningún usuario, devolvemos null.
+    // si no encontramos coincidencias, devolvemos null.
     if (resultado.empty) {
         return null;
     }
 
-    // obtenemos el primer documento encontrado.
+    // obtenemos el primer usuario encontrado.
     const documentoUsuario = resultado.docs[0];
 
-    // devolvemos el ID del documento junto con sus datos.
+    // devolvemos el ID y los datos del usuario.
     return {
         id: documentoUsuario.id,
         ...documentoUsuario.data()
@@ -68,27 +70,34 @@ export const findByEmail = async (email) => {
 
 
 // ==================================================
-// REGISTRAR UN USUARIO NUEVO
+// CREAR USUARIO
 // ==================================================
 
-// recibimos el correo electrónico y la contraseña, previamente protegida con bcryptjs.
+// esta función guarda un usuario nuevo en Firebase.
+// recibe su correo y su contraseña ya encriptada.
 export const create = async ({ email, password }) => {
 
     // guardamos los datos del usuario en Firestore.
-    const nuevoUsuario = await addDoc(
+    // el rol se establece desde el servidor y no se recibe desde el formulario de registro.
+    const nuevoUsuario = {
+        email,
+        password,
+        rol: "usuario"
+    };
+
+    // agregamos el documento a la colección.
+    const referenciaUsuario = await addDoc(
         usuariosColeccion,
-        {
-            email,
-            password
-        }
+        nuevoUsuario
     );
 
-    // devolvemos los datos del usuario creado, incluyendo el ID generado por Firestore.
+    // devolvemos los datos del usuario creado.
     return {
-        id: nuevoUsuario.id,
-        email,
-        password
+        id: referenciaUsuario.id,
+        ...nuevoUsuario
     };
 };
+
+
 
 

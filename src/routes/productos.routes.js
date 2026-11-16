@@ -1,26 +1,30 @@
-/*
-====================================
-PARA QUE SIRVE?
-Define las rutas o direcciones que permiten 
-realizar operaciones sobre productos.
 
-Cada ruta recibe una solicitud HTTP y 
-la deriva al controlador correspondiente para procesarla.
+/*
+====================================================
+¿PARA QUÉ SIRVE?
+Este archivo define las rutas que permiten
+realizar operaciones sobre los productos.
+
+Se encarga de:
+- Permitir consultas públicas de productos.
+- Proteger las operaciones de creación,
+  modificación y eliminación.
+- Verificar que solamente un administrador
+  pueda realizar esas operaciones.
 
 Las operaciones serán:
-- GET: Consultar todos los productos.
-- GET: Consultar un producto específico por su ID.
-- POST: Crear un nuevo producto.
-- PUT: Actualizar un producto existente por su ID.
-- DELETE: Eliminar un producto por su ID.
-====================================
+- GET: consultar todos los productos.
+- GET: consultar un producto por su ID.
+- POST: crear un producto.
+- PUT: actualizar un producto.
+- DELETE: eliminar un producto.
+====================================================
 */
 
-// importamos Router desde Express para crear un grupo de rutas independientes
+// importamos Router desde Express para crear las rutas de productos.
 import { Router } from "express";
 
-// importamos las funciones del controlador.
-// cada función maneja la lógica de una operación específica sobre productos.
+// importamos los controladores de productos.
 import {
     obtenerProductos,
     obtenerProductoPorId,
@@ -29,28 +33,48 @@ import {
     eliminarProducto
 } from "../controllers/productos.controller.js";
 
-// creamos nuestro enrutador
+// importamos el middleware que verifica si el usuario tiene un token válido.
+import { verificarToken } from "../middlewares/authentication.js";
+
+// importamos el middleware que verifica si el usuario tiene permisos de administrador.
+import { verificarAdmin } from "../middlewares/authorization.js";
+
+// creamos el enrutador.
 const router = Router();
 
-// ====================================
-// RUTAS DE PRODUCTOS
-// ====================================
 
-// GET: Obtener todos los productos.
-router.get(`/`, obtenerProductos);
+// ==================================================
+// RUTAS PÚBLICAS
+// ==================================================
 
-// GET: Obtener un producto específico por su ID.
-router.get(`/:id`, obtenerProductoPorId);
+// consultar todos los productos.
+// no requiere iniciar sesión.
+router.get("/", obtenerProductos);
 
-// POST: Crear un nuevo producto.
-router.post(`/`, crearProducto);
+// consultar un producto por su ID.
+// no requiere iniciar sesión.
+router.get("/:id", obtenerProductoPorId);
 
-// PUT: Actualizar un producto existente por su ID.
-router.put(`/:id`, actualizarProducto);
 
-// DELETE: Eliminar un producto por su ID.
-router.delete(`/:id`, eliminarProducto);
+// ==================================================
+// RUTAS PROTEGIDAS
+// ==================================================
 
-// exportamos el enrutador para utilizarlo desde nuestro archivo principal (index.js)
+// crear un producto.
+// primero verificamos el token y después comprobamos que el usuario sea administrador.
+router.post("/", verificarToken, verificarAdmin, crearProducto);
+
+// actualizar un producto.
+// Solamente puede hacerlo un administrador.
+router.put("/:id", verificarToken, verificarAdmin, actualizarProducto);
+
+// eliminar un producto.
+// Solamente puede hacerlo un administrador.
+router.delete("/:id", verificarToken, verificarAdmin, eliminarProducto);
+
+
+// exportamos las rutas para utilizarlas desde el archivo principal index.js.
 export default router;
+
+
 

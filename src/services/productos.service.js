@@ -21,7 +21,7 @@ import * as productosModel from "../models/productos.model.js";
 
 // solicitamos al model la lista completa de productos
 export const obtenerProductos = () => {
-    return productosModel.obtenerProductos();
+    return productosModel.obtenerTodos();
 };
 
 // ====================================
