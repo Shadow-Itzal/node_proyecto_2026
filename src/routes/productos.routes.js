@@ -62,7 +62,7 @@ router.get("/:id", obtenerProductoPorId);
 
 // crear un producto.
 // primero verificamos el token y después comprobamos que el usuario sea administrador.
-router.post("/", verificarToken, verificarAdmin, crearProducto);
+router.post("/create", verificarToken, verificarAdmin, crearProducto);
 
 // actualizar un producto.
 // Solamente puede hacerlo un administrador.
@@ -72,6 +72,10 @@ router.put("/:id", verificarToken, verificarAdmin, actualizarProducto);
 // Solamente puede hacerlo un administrador.
 router.delete("/:id", verificarToken, verificarAdmin, eliminarProducto);
 
+
+// ==================================================
+// EXPORTACIÓN
+// ==================================================
 
 // exportamos las rutas para utilizarlas desde el archivo principal index.js.
 export default router;

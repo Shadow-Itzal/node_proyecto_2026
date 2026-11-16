@@ -34,16 +34,21 @@ export const registrarUsuario = async (req, res) => {
         const { email, password } = req.body;
 
         // verificamos que se haya ingresado un correo y una contraseña.
-        if (!email || !password) {
+        if (
+            typeof email !== "string" ||
+            typeof password !== "string" ||
+            !email.trim() ||
+            !password
+        ) {
             return res.status(400).json({
                 mensaje: "El correo y la contraseña son obligatorios"
             });
         }
 
-        // comprobamos que el correo tenga formato de texto y que la contraseña tenga al menos 6 caracteres.
-        if (typeof email !== "string" || typeof password !== "string" || password.length < 6) {
+        // comprobamos que la contraseña tenga al menos 6 caracteres.
+        if (password.length < 6) {
             return res.status(400).json({
-                mensaje: "El correo debe ser válido y la contraseña debe tener al menos 6 caracteres"
+                mensaje: "La contraseña debe tener al menos 6 caracteres"
             });
         }
 
@@ -85,8 +90,13 @@ export const iniciarSesion = async (req, res) => {
         // obtenemos las credenciales enviadas en el cuerpo de la solicitud.
         const { email, password } = req.body;
 
-        // verificamos que ambos datos estén presentes.
-        if (!email || !password) {
+        // verificamos que ambos datos estén presentes y tengan el formato esperado
+        if (
+            typeof email !== "string" ||
+            typeof password !== "string" ||
+            !email.trim() ||
+            !password
+        ) {
             return res.status(400).json({
                 mensaje: "El correo y la contraseña son obligatorios"
             });

@@ -24,6 +24,9 @@ import express from "express";
 // importamos CORS para permitir solicitudes desde otros orígenes.
 import cors from "cors";
 
+// importamos body-parser para interpretar los datos enviados en formato json
+import bodyParser from "body-parser";
+
 // importamos las rutas de productos.
 import productosRouter from "./src/routes/productos.routes.js";
 
@@ -47,11 +50,11 @@ const PORT = process.env.PORT || 3000;
 // MIDDLEWARES GLOBALES
 // ==================================================
 
-// permitimos que Express interprete los datos enviados en formato JSON.
-app.use(express.json());
-
 // habilitamos CORS para permitir solicitudes desde otros orígenes.
 app.use(cors());
+
+// permitimos que nuestra aplicación interprete los datos enviados en formato json.
+app.use(bodyParser.json());
 
 // mostramos en la consola el método y la dirección de cada solicitud que recibe nuestro servidor.
 app.use((req, res, next) => {
@@ -78,11 +81,11 @@ app.get("/", (req, res) => {
 
 // conectamos las rutas de productos.
 // todas comenzarán con /api/productos.
-app.use("/api/productos", productosRouter);
+app.use("/api/products", productosRouter);
 
 // conectamos las rutas de autenticación.
 // todas comenzarán con /api/auth.
-app.use("/api/auth", authRouter);
+app.use("/auth", authRouter);
 
 
 // ==================================================

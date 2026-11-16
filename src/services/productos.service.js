@@ -1,7 +1,7 @@
 /*
 ====================================
 PARA QUE SIRVE?
-ESte archivo contiene la lógica de los servicios relacionados con los productos.
+Este archivo contiene la lógica de los servicios relacionados con los productos.
 
 Su función es comunicar el controller con el model,
 delegando en este último las operaciones sobre la BD.

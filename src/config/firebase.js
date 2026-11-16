@@ -35,7 +35,23 @@ const firebaseConfig = {
 
 
 // ====================================
-// INICIALIZAMOS DE FIREBASE
+// COMPROBACIÓN DE CONFIGURACIÓN
+// ====================================
+
+// verificamos que estén presente los datos necesarios para conectar nuestra aplicación
+const configuracionIncompleta = Object.values(firebaseConfig).some(
+    (valor) => !valor
+);
+
+if (configuracionIncompleta) {
+    throw new Error(
+        "Faltan datos de configuración de Firebase en el archivo .env"
+    )
+}
+
+
+// ====================================
+// INICIALIZACIÓN DE FIREBASE
 // ====================================
 
 // inicializamos Firebase utilizando la configuración anterior

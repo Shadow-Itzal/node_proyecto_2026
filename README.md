@@ -21,14 +21,14 @@
 
 
 ## Rutas conectadas
-Método  |	Dirección         |	Función
-------  | ----------------    | -----------------
-GET	    |      /	          | Mensaje de bienvenida
-GET	    | /api/productos      |	Obtener productos
-GET	    | /api/productos/:id  |	Obtener un producto
-POST	| /api/productos      |	Crear producto
-PUT	    | /api/productos/:id  |	Actualizar producto
-DELETE  | /api/productos/:id  |	Eliminar producto
-POST    | /api/auth/register  |	Registrar usuario
-POST    | /api/auth/login     |	Iniciar sesión
+Método  |	Dirección           |	Función
+------  | -------------------   | -----------------
+GET	    |         /	            |   Mensaje de bienvenida
+GET	    | /api/products         |	Obtener productos
+GET	    | /api/products/:id     |	Obtener un producto
+POST	| /api/products/create  |	Crear producto
+PUT	    | /api/products/:id     |	Actualizar producto
+DELETE  | /api/products/:id     |	Eliminar producto
+POST    | /auth/register        |	Registrar usuario
+POST    | /auth/login           |	Iniciar sesión
 

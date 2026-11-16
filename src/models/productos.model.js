@@ -24,7 +24,7 @@ import {
     addDoc,
     updateDoc,
     deleteDoc
-} from "firebase/firestore"
+} from "firebase/firestore";
 
 
 // ========================================

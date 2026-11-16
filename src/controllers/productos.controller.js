@@ -31,15 +31,15 @@ export const obtenerProductos = async (req, res) => {
         const productos = await productosService.obtenerProductos();
 
         // respondemos con estado 200 (OK) y la lista de productos en formato JSON
-        res.status(200).json(productos);
+        return res.status(200).json(productos);
 
     } catch (error) {
         // si ocurre un error, lo mostramos en la terminal
         console.error("Error al obtener productos:", error);
 
         // respondemos con estado 500 (error del servidor)
-        res.status(500).json({ 
-            message: "Error al obtener productos" 
+        return res.status(500).json({ 
+            mensaje: "Error al obtener productos" 
         });
     }
 }
@@ -60,19 +60,19 @@ export const obtenerProductoPorId = async (req, res) => {
         // si no existe, respondemos con estado 404 (no encontrado)
         if (!producto) {
             return res.status(404).json({ 
-                message: "Producto no encontrado" 
+                mensaje: "Producto no encontrado" 
             });
         }
 
         // si existe,respondemos con estado 200 (OK) y el producto en formato JSON
-        res.status(200).json(producto);
+        return res.status(200).json(producto);
 
     } catch (error) {
 
         console.error("Error al obtener producto:", error);
 
-        res.status(500).json({ 
-            message: "Error al obtener producto" 
+        return res.status(500).json({ 
+            mensaje: "Error al obtener producto" 
         });
     }
 }
@@ -87,12 +87,24 @@ export const crearProducto = async (req, res) => {
         // obtenemos los datos enviados en el cuerpo de la solicitud (req.body)
         const datosProducto = req.body;
 
+        // comprobamos que se hayan recibido datos.
+        if (
+            !datosProducto ||
+            typeof datosProducto !== "object" ||
+            Array.isArray(datosProducto) ||
+            object.keys(datosProducto).length === 0
+        ) {
+            return res.status(400).json({
+                mensaje: "Debe enviar los datos del producto"
+            });
+        }
+
         // enviamos los datos al servicio para crear el nuevo producto
         const nuevoProducto = await productosService.crearProducto(datosProducto);
 
         // respondemos con estado 201 (creado) y el nuevo producto en formato JSON
-        res.status(201).json({
-            message: "Producto creado exitosamente",
+        return res.status(201).json({
+            mensaje: "Producto creado exitosamente",
             producto: nuevoProducto
         });
 
@@ -100,8 +112,8 @@ export const crearProducto = async (req, res) => {
         
         console.error("Error al crear producto:", error);
 
-        res.status(500).json({ 
-            message: "Error al crear producto" 
+        return res.status(500).json({ 
+            mensaje: "Error al crear producto" 
         });
     }
 }
@@ -119,6 +131,18 @@ export const actualizarProducto = async (req, res) => {
         // obtenemos los nuevos datos enviados en la solicitud
         const datosProducto = req.body;
 
+        // comprobamos que se hayan recibido datos
+        if (
+            !datosProducto ||
+            typeof datosProducto !== "object" ||
+            Array.isArray(datosProducto) ||
+            object.keys(datosProducto).length === 0
+        ) {
+            return res.status(400).json({
+                mensaje: "Debe enviar los datos para actualizar el producto"
+            });
+        }
+
         // solicitamos al servicio que actualice el producto
         const productoActualizado = await productosService.actualizarProducto(id, datosProducto);
 
@@ -130,7 +154,7 @@ export const actualizarProducto = async (req, res) => {
         }
 
         // si se actualizó correctamente, respondemos con 200
-        res.status(200).json({
+        return res.status(200).json({
             mensaje: "Producto actualizado correctamente",
             producto: productoActualizado
         });
@@ -138,8 +162,8 @@ export const actualizarProducto = async (req, res) => {
     } catch (error) {
         console.error("Error al actualizar el producto:", error);
 
-        res.status(500).json({ 
-            message: "Error al actualizar producto" 
+        return res.status(500).json({ 
+            mensaje: "Error al actualizar producto" 
         });
     }
     
@@ -166,15 +190,15 @@ export const eliminarProducto = async (req, res) => {
         }
     
         // si se eliminó correctamente, respondemos con 200
-        res.status(200).json({
+        return res.status(200).json({
             mensaje: "Producto eliminado correctamente",
         });
     
     } catch (error) {
         console.error("Error al eliminar el producto:", error);
     
-        res.status(500).json({ 
-            message: "Error al eliminar producto" 
+        return res.status(500).json({ 
+            mensaje: "Error al eliminar producto" 
         });
     }
 };
