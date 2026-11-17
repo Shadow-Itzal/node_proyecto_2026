@@ -13,6 +13,7 @@
   "type": "module",
   "description": "API REST de productos con Node.js, Express y Firebase",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "body-parser": "^2.4.0",
     "cors": "^2.8.6",
     "dotenv": "^18.0.9",

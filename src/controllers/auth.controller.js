@@ -92,12 +92,12 @@ export const iniciarSesion = async (req, res) => {
 
         // verificamos que ambos datos estén presentes y tengan el formato esperado
         if (
-            typeof email !== "string" ||
+            typeof email !== "string" || 
             typeof password !== "string" ||
             !email.trim() ||
             !password
         ) {
-            return res.status(400).json({
+            return res.status(400).json({ 
                 mensaje: "El correo y la contraseña son obligatorios"
             });
         }
