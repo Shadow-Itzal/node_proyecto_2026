@@ -25,7 +25,7 @@ import express from "express";
 import cors from "cors";
 
 // importamos body-parser para interpretar los datos enviados en formato json
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
 
 // importamos las rutas de productos.
 import productosRouter from "./src/routes/productos.routes.js";
@@ -54,7 +54,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 
 // permitimos que nuestra aplicación interprete los datos enviados en formato json.
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
+
+// No necesitamos usar body parser, podemos usar express
+app.use(express.json());
 
 // mostramos en la consola el método y la dirección de cada solicitud que recibe nuestro servidor.
 app.use((req, res, next) => {
