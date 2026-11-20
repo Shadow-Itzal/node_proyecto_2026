@@ -92,7 +92,7 @@ export const crearProducto = async (req, res) => {
             !datosProducto ||
             typeof datosProducto !== "object" ||
             Array.isArray(datosProducto) ||
-            object.keys(datosProducto).length === 0
+            Object.keys(datosProducto).length === 0
         ) {
             return res.status(400).json({
                 mensaje: "Debe enviar los datos del producto"
@@ -136,7 +136,7 @@ export const actualizarProducto = async (req, res) => {
             !datosProducto ||
             typeof datosProducto !== "object" ||
             Array.isArray(datosProducto) ||
-            object.keys(datosProducto).length === 0
+            Object.keys(datosProducto).length === 0
         ) {
             return res.status(400).json({
                 mensaje: "Debe enviar los datos para actualizar el producto"
