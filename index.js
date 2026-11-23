@@ -83,11 +83,11 @@ app.get("/", (req, res) => {
 // ==================================================
 
 // conectamos las rutas de productos.
-// todas comenzarán con /api/productos.
+// todas comenzarán con /api/products.
 app.use("/api/products", productosRouter);
 
 // conectamos las rutas de autenticación.
-// todas comenzarán con /api/auth.
+// todas comenzarán con /auth.
 app.use("/auth", authRouter);
 
 

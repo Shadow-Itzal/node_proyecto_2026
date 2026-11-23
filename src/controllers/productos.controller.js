@@ -5,7 +5,7 @@ Contiene las funciones que reciben y procesan
 las solicitudes relacionadas con los productos.
 
 Se comunica con los servicios para realizar
-las operaciones de devuelve las respuestas al cliente.
+las operaciones y devuelve las respuestas al cliente.
 
 Las operaciones son:
 - Obtener todos los productos.
@@ -13,12 +13,94 @@ Las operaciones son:
 - Crear un producto.
 - Actualizar un producto.
 - Eliminar un producto.
+
+También valida los datos recibidos para evitar
+guardar información incorrecta.
 ====================================
 */
 
 // importamos los servicios de productos.
 // el controlador delega en ellos las operaciones relacionadas con los datos.
 import * as productosService from "../services/productos.service.js";
+
+
+// ====================================
+// VALIDAR LOS DATOS DE UN PRODUCTO
+// ====================================
+
+// esta función comprueba que los campos enviados tengan el tipo de dato correcto.
+
+// los cuatro campos son opcionales.
+// pero si se envían, deben cumplir las reglas.
+
+// devuelve un mensaje si encuentra un error.
+// si todos los datos son válidos, devuelve null.
+
+const validarDatosProducto = (datosProducto) => {
+
+    // definimos los únicos campos permitidos para un producto.
+    const camposPermitidos = [
+        "nombre",
+        "precio",
+        "stock",
+        "categoria"
+    ];
+
+    // buscamos si se recibió algún campo que no esté permitido.
+    const campoNoPermitido = Object.keys(datosProducto).find(
+        (campo) => !camposPermitidos.includes(campo)
+    );
+
+    // si encontramos un campo desconocido, devolvemos un error.
+    if (campoNoPermitido) {
+        return `El campo ${campoNoPermitido} no está permitido`;
+    }
+
+    // comprobamos el nombre, si fue enviado.
+    if ("nombre" in datosProducto) {
+        if (
+            typeof datosProducto.nombre !== "string" ||
+            datosProducto.nombre.trim() === ""
+        ) {
+            return "El nombre debe ser un texto";
+        }
+    }
+
+    // comprobamos el precio, si fue enviado.
+    if ("precio" in datosProducto) {
+        if (
+            typeof datosProducto.precio !== "number" ||
+            !Number.isInteger(datosProducto.precio) ||
+            datosProducto.precio < 0
+        ) {
+            return "El precio debe ser un número entero igual o mayor que cero";
+        }
+    }
+
+    // comprobamos el stock, si fue enviado.
+    if ("stock" in datosProducto) {
+        if (
+            typeof datosProducto.stock !== "number" ||
+            !Number.isInteger(datosProducto.stock) ||
+            datosProducto.stock < 0
+        ) {
+            return "El stock debe ser un número entero igual o mayor que cero";
+        }
+    }
+
+    // comprobamos la categoría, si fue enviada.
+    if ("categoria" in datosProducto) {
+        if (
+            typeof datosProducto.categoria !== "string" ||
+            datosProducto.categoria.trim() === ""
+        ) {
+            return "La categoría debe ser un texto";
+        }
+    }
+
+    // si no encontramos errores, devolvemos null.
+    return null;
+};
 
 
 // ====================================
@@ -99,6 +181,16 @@ export const crearProducto = async (req, res) => {
             });
         }
 
+        // validamos los campos que fueron enviados
+        const errorValidacion = validarDatosProducto(datosProducto);
+
+        // si algún dato no cumple las reglas, respondemos con 422
+        if (errorValidacion) {
+            return res.status(422).json({
+                mensaje: errorValidacion
+            });
+        }
+
         // enviamos los datos al servicio para crear el nuevo producto
         const nuevoProducto = await productosService.crearProducto(datosProducto);
 
@@ -140,6 +232,16 @@ export const actualizarProducto = async (req, res) => {
         ) {
             return res.status(400).json({
                 mensaje: "Debe enviar los datos para actualizar el producto"
+            });
+        }
+
+        // validamos solamente los campos que fueron enviados.
+        const errorValidacion = validarDatosProducto(datosProducto);
+
+        // si algún campo no cumple las reglas, respondemos con 422.
+        if (errorValidacion) {
+            return res.status(422).json({
+                mensaje: errorValidacion
             });
         }
 
