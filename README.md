@@ -1,3 +1,4 @@
+
 # 🚀 API REST de Productos | Proyecto Final Node.js 2026
 
 API REST desarrollada como proyecto final del curso de Node.js 2026. Permite gestionar productos almacenados en Firebase Firestore, registrar usuarios, iniciar sesión y controlar el acceso mediante autenticación JWT y roles.
@@ -13,6 +14,7 @@ API REST desarrollada como proyecto final del curso de Node.js 2026. Permite ges
 - Contraseñas protegidas mediante hash con bcryptjs.
 - Control de permisos según el rol del usuario.
 - Almacenamiento de datos en Firebase Firestore.
+- Validación de los datos recibidos para crear y modificar productos.
 
 ## 🛠️ Tecnologías utilizadas
 
@@ -137,31 +139,23 @@ Las contraseñas se almacenan protegidas mediante bcryptjs.
 
 ## 📋 Códigos de respuesta HTTP
 
-La API utiliza códigos de estado HTTP para indicar el resultado de cada solicitud.
+La API utiliza distintos códigos de estado HTTP para indicar el resultado de cada solicitud:
 
-### Respuestas exitosas
+| Código | Significado |
+|---|---|
+| `200 OK` | Solicitud exitosa. |
+| `201 Created` | Recurso creado correctamente. |
+| `400 Bad Request` | Solicitud incompleta o incorrecta. |
+| `401 Unauthorized` | Falta autenticación válida. |
+| `403 Forbidden` | El usuario no tiene permisos suficientes. |
+| `404 Not Found` | Recurso o ruta no encontrada. |
+| `409 Conflict` | Conflicto con datos existentes. |
+| `422 Unprocessable Entity` | Los datos no cumplen las validaciones. |
+| `500 Internal Server Error` | Error interno del servidor. |
 
-| Código | Significado | Cuándo se utiliza |
-|---|---|---|
-| `200 OK` | Solicitud exitosa. | Consulta de productos, inicio de sesión y operaciones que finalizan correctamente con respuesta 200. |
-| `201 Created` | Recurso creado. | Registro de un usuario o creación de un producto. |
+Para consultar las situaciones que generan estos códigos, los mensajes de respuesta y las pruebas realizadas, visitar:
 
-### Errores del cliente
-
-| Código | Significado | Cuándo se utiliza |
-|---|---|---|
-| `400 Bad Request` | Solicitud incorrecta. | Cuando faltan datos, los datos enviados son inválidos o no cumplen las validaciones. |
-| `401 Unauthorized` | No autorizado. | Cuando no se envía un token, el token es inválido o las credenciales de inicio de sesión son incorrectas. |
-| `403 Forbidden` | Acceso prohibido. | Cuando el usuario está autenticado, pero no tiene permisos suficientes para realizar la operación. |
-| `404 Not Found` | Recurso no encontrado. | Cuando el producto solicitado no existe o se consulta una ruta inexistente. |
-
-### Errores del servidor
-
-| Código | Significado | Cuándo se utiliza |
-|---|---|---|
-| `500 Internal Server Error` | Error interno del servidor. | Cuando ocurre un problema inesperado durante el procesamiento de una solicitud. |
-
-**Nota:** El mensaje que acompaña al código HTTP permite identificar con mayor precisión qué ocurrió durante la operación.
+👉 [Documentación de pruebas y respuestas HTTP](docs/ERRORES_HTTP.md)
 
 ## 🔥 Base de datos
 
@@ -188,6 +182,9 @@ Almacena los datos de los usuarios, incluyendo su correo electrónico, contrase�
 
 ```text
 node_proyecto_2026/
+│
+├── docs/
+│   └── ERRORES_HTTP.md
 │
 ├── src/
 │   ├── config/
@@ -226,9 +223,11 @@ node_proyecto_2026/
 
 ## 🧪 Pruebas
 
-Las solicitudes de la API se realizan mediante Postman.
+Las solicitudes de la API se realizaron mediante Postman.
 
-Se verifican las operaciones de consulta, creación, modificación y eliminación de productos, además del inicio de sesión y el control de permisos según el rol del usuario.
+Se verificaron las operaciones CRUD, el registro e inicio de sesión, la autenticación JWT, los permisos por roles y las validaciones de los datos de productos.
+
+Los resultados y casos de error se encuentran detallados en [Documentación de pruebas y respuestas HTTP](docs/ERRORES_HTTP.md).
 
 ## 📄 Licencia
 
